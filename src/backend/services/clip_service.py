@@ -39,9 +39,21 @@ class CLIPService:
 
         with torch.no_grad():
             text_features = self.model.get_text_features(**text_inputs)
-            text_features = text_features / text_features.norm(dim=-1, keepdim=True)
+            
+            # Handle both tensor and ModelOutput types
+            if isinstance(text_features, torch.Tensor):
+                embeddings = text_features
+            elif hasattr(text_features, 'pooler_output'):
+                embeddings = text_features.pooler_output
+            elif hasattr(text_features, 'last_hidden_state'):
+                # If we get last_hidden_state (3D), take the pooled token (first token)
+                embeddings = text_features.last_hidden_state[:, 0, :]
+            else:
+                embeddings = torch.tensor(text_features)
+            
+            embeddings = embeddings / embeddings.norm(dim=-1, keepdim=True)
 
-        return text_features.cpu()
+        return embeddings.cpu()
 
     def encode_image(self, image) -> torch.Tensor:
         """Encode image to embedding"""
@@ -50,8 +62,20 @@ class CLIPService:
 
         with torch.no_grad():
             image_features = self.model.get_image_features(**image_inputs)
-            image_features = image_features / image_features.norm(dim=-1, keepdim=True)
-        return image_features.cpu()
+            
+            # Handle both tensor and ModelOutput types
+            if isinstance(image_features, torch.Tensor):
+                embeddings = image_features
+            elif hasattr(image_features, 'pooler_output'):
+                embeddings = image_features.pooler_output
+            elif hasattr(image_features, 'last_hidden_state'):
+                # If we get last_hidden_state (3D), take the pooled token (first token)
+                embeddings = image_features.last_hidden_state[:, 0, :]
+            else:
+                embeddings = torch.tensor(image_features)
+            
+            embeddings = embeddings / embeddings.norm(dim=-1, keepdim=True)
+        return embeddings.cpu()
 
 
 clip_service = CLIPService()

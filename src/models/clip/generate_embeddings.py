@@ -41,7 +41,21 @@ def generate_embeddings(
         inputs = {k: v.to(device) for k, v in inputs.items()}
 
         with torch.no_grad():
-            embeddings = model.get_image_features(**inputs)
+            image_features = model.get_image_features(**inputs)
+            
+            # Handle both tensor and ModelOutput types
+            # Check in correct order: tensor first (v4.x), then pooler_output (v5.x), then last_hidden_state
+            if isinstance(image_features, torch.Tensor):
+                embeddings = image_features
+            elif hasattr(image_features, 'pooler_output'):
+                embeddings = image_features.pooler_output
+            elif hasattr(image_features, 'last_hidden_state'):
+                # If we get last_hidden_state (3D), take the pooled token (first token)
+                embeddings = image_features.last_hidden_state[:, 0, :]
+            else:
+                embeddings = torch.tensor(image_features)
+            
+            # Normalize the embeddings
             embeddings = embeddings / embeddings.norm(dim=-1, keepdim=True)
 
         return embeddings.cpu()
