@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "openseadragon": "^4.1.1",
+    "openseadragon": "^5.0.1",
     "react": "^18.2.15",
     "react-dom": "^18.2.15",
     "react-grid-gallery": "^1.0.0"
