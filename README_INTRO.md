@@ -828,6 +828,7 @@ TODO:
 - Test backwards compatibility with older transformers 4.4 package
 - Start working on docker compose
 - Embedding model evaluation (nice to have but this model seems ok, while not perfect)
+  - Cohere v4 multilingual and multimodal https://cohere.com/blog/embed-4
 - Research how to use multiple embedding models (e.g. GovScape uses both CLIP and BGE)
   - Consider reranking strategies
 
@@ -838,8 +839,10 @@ Questions for UX team:
     - Text mode (current)
     - Image mode (image search)
     - Agent mode (chatbot)
-  - Easier from a technical standpoint to have separate modes
+  - May be easier from a technical standpoint to have separate modes
     - Can look into a combined search experience, although may be better to do separate interfaces at first and then work on the integrated search as an enhancement, in the interest of developing iteratively as Stu advocates
+    - May be possible to have a unified text/image search experience with multilingual and multimodal models
+      - https://cohere.com/blog/embed-4
 
 Known issues:
 
